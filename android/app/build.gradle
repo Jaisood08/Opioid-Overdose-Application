@@ -1,5 +1,5 @@
-apply plugin: "com.android.application"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
@@ -191,6 +191,8 @@ android {
 }
 
 dependencies {
+
+    implementation platform('com.google.firebase:firebase-bom:29.0.1')
 
     // If your app supports Android versions before Ice Cream Sandwich (API level 14)
     implementation 'com.facebook.fresco:animated-base-support:1.3.0'
