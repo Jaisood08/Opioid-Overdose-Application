@@ -1,17 +1,12 @@
-import React, {useRef,useState,useEffect} from 'react';
+import React, {useRef,useState} from 'react';
 import {
     DrawerLayoutAndroid,
     StyleSheet,
-    Dimensions,
     ScrollView,
-    TouchableOpacity,
-    View} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+} from 'react-native';
 import {
     NativeBaseProvider,
-    Button,
     Box,
-    HamburgerIcon,
     Pressable,
     Heading,
     VStack,
@@ -20,109 +15,66 @@ import {
     Image,
     HStack,
     Divider,
-    Avatar
+    Avatar,
+    FormControl,
+    Input,
+    Button
 } from 'native-base';
 
-import {
-    LineChart,
-  } from "react-native-chart-kit";
+import Snackbar from 'react-native-snackbar'
+import ProgressBar from 'react-native-progress/Bar'
 
+import database from '@react-native-firebase/database'
 
+import storage from '@react-native-firebase/storage'
+import ImagePicker from 'react-native-image-picker'
+import {options} from '../utils/options'
+
+//redux
 import { connect} from 'react-redux'
 import propTypes from 'prop-types'
 import {signOut,GoggleData} from '../action/auth'
 
+
 import Icon3 from 'react-native-vector-icons/dist/FontAwesome'
 import Fa from 'react-native-vector-icons/FontAwesome'
 import Icon from 'react-native-vector-icons/dist/AntDesign'
-import Icon2 from 'react-native-vector-icons/dist/Entypo'
+import Icon2 from 'react-native-vector-icons/dist/MaterialCommunityIcons'
 
 import EmptyContainer from '../componenets/EmptyContainer'
 
-var Time = [87,61,77,95,50,75,50,80,68,66];
-const MINUTE_MS = 100000000;
-
-const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
-
-
-    //Chart 1
-    const [C1, setC1] = useState(Time)
-
-    const chartConfig = {
-      backgroundGradientFrom: "#2193b0",
-      backgroundGradientFromOpacity: 0.6,
-      backgroundGradientTo: "#6dd5ed",
-      backgroundGradientToOpacity: 0.2,
-      color: (opacity = .21) => `rgba(26, 255, 146, ${opacity})`,
-      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-      strokeWidth: .41, // optional, default 3
-      useShadowColorFromDataset: true ,
-      style: {
-        borderRadius: 16
-      },
-      propsForDots: {
-        r: "1",
-        strokeWidth: "2",
-        stroke: "#B22222"
-      }
-    };
-    
-    var width = Dimensions.get('window').width; 
-
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-
-    const Chart1 = (data1) => {
-      return(
-            <LineChart
-              data={{
-                      datasets: [{
-                                    labels: ["|","|","|","|","|","|","|","|","|","|"],
-                                    data: C1, //Array of values 
-                                    color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-                                    strokeWidth: 2 // optional
-                              }]  
-                      }}
-              chartConfig={chartConfig }
-              width={width*.98}
-              height={220}                  
-              verticalLabelRotation={70}
-              withInnerLines={false}
-              bezier // type of line chart     
-              style={{
-                marginVertical: 8,
-                borderRadius: 16,
-              }}         
-              />
-      )
-    }
-
-    // useEffect(() => {
-    //   const interval = setInterval(() => {
-    //     Time.shift();
-    //     Time.push((Math.floor(Math.random() * 100) + 1) )
-    //     const Arr = []
-    //     for(var i = 0; i < Time.length; i++){
-    //       Arr.push(Time[i])
-    //     }
-    //     setC1(Arr)
-    //     Chart1(Time)
-    //   }, MINUTE_MS);
-    
-    //   return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-    // }, [])
-
-    // while(true){
-    //     Time.shift();
-    //     Time.push((Math.floor(Math.random() * 100) + 1) )
-    //     console.log(Time)
-    // }
-    
-
-    //Chart 1 End ////////////////////////////////
+const Profile = ({signOut,userState, authState, navigation,GoggleData}) => {
 
     const drawer = useRef(null);
     const [drawerPosition, setDrawerPosition] = useState("right");
+
+    const [name,setname] = useState(userState.name);
+    const email = userState.email;
+    const [Contact,setContact] = useState(userState.Contact);
+    const [Address,setAddress] = useState(userState.Address);
+    const [Country,setCountry] = useState(userState.Country);
+    const [Bio,setBio] = useState(userState.Bio);
+    const [image,setimage] = useState(userState.image);
+    const [Age,setAge] = useState(userState.Age);
+
+    const [iri,setiri] = useState(1);
+
+    
+    
+    
+    var obj ={
+        name:'',
+        age:'',
+        Contact:'',
+        email:'',
+        Address:'',
+    }
+    var Starparivar = [0,1,2]
+    if(userState.Pariwar)
+    {
+        Starparivar = userState.Pariwar
+    }
+    const [Pariwar,setPariwar] = useState(Starparivar);
 
     console.log("YEEEYE");
     console.log(userState);
@@ -140,7 +92,7 @@ const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
       <VStack space="6" my="2" mx="1">
           <Center px='3'>
               <Image 
-              source={require('../assets/Skull.png')}  
+              source={require('../assets/Skull.png')} 
               size='xl'
               style={{left:-10}}
               resizeMode={'contain'}
@@ -160,7 +112,7 @@ const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
                   rounded="md"
                   onPress={() => {
                     drawer.current.closeDrawer()
-                  }
+                    navigation.navigate('Home')}
                   }
                  >
                   <HStack space="7" alignItems="center">
@@ -193,11 +145,7 @@ const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
                   </HStack>
               </Pressable>
           
-              <Pressable px="5" py="3"
-              onPress={() => {
-                drawer.current.closeDrawer()
-                navigation.navigate('Family')}
-              }>
+              <Pressable px="5" py="3">
                   <HStack space="7" alignItems="center">
                       <Icon3 name="user-circle" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">
@@ -234,7 +182,6 @@ const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
       </NativeBaseProvider>
     );
     
-
     return (
       <DrawerLayoutAndroid
         ref={drawer}
@@ -245,27 +192,50 @@ const HomeScreen = ({signOut,userState, authState, navigation,GoggleData}) => {
       <ScrollView>
       <NativeBaseProvider>
         <Box style={styles.container}>
-            <Pressable onPress={ ()=>{
-                console.log("clicked"); 
-                navigation.navigate('Profile')
-            }}>
-              <Box style={{flexDirection:"row"}}>
-                  <Avatar size ="md" source={{uri:userState.image}} />
-                  <Text bold color="black" textAlign='center'
+                <Pressable onPress={ ()=>{
+                    console.log("clicked"); 
+                    navigation.navigate('Profile')
+                }}>
+                <Box style={{flexDirection:"row"}}>
+                    <Avatar size ="md" source={{uri:userState.image}} />
+                    <Text bold color="black" textAlign='center'
                     style={{fontSize:17 ,margin:13}} >{userState.name}</Text>
-              </Box>
+                </Box>
             </Pressable>
             <Box>
             <Fa name="bars" size={40} color="red" onPress ={()=>drawer.current.openDrawer()}/>
             </Box>
         </Box>
-        <Box style={{margin:5}}>
-
+        <Box style={{color:"black"}}>
+        <Center>
+          <Divider my={2} />
             <Text bold color="black" textAlign='center' fontSize='4xl'>
-                Home Content
+                Family Members
             </Text>
-            <Chart1/>
+          <Divider my={2} />
+        {(Starparivar.length==0)?(<Text bold color="black" textAlign='center' fontSize='2xl'>NO member added</Text>):''   
+        }
 
+        {Pariwar.map((da)=>(
+            <Text>{da}</Text>
+        ))}
+
+          <Avatar size ="lg" source={{uri:userState.image}} />
+          <Text>{iri}</Text>
+
+          <Button onPress={()=>{
+            const Z = iri+1
+            const neo = Pariwar
+            neo.push(Z)
+            setPariwar(neo)
+            setiri(Z)
+            console.log("clicked");
+            console.log(Pariwar)
+          }}>
+          <Text>Add Family Member</Text>
+          </Button>
+
+          </Center>
         </Box>
       </NativeBaseProvider>  
       </ScrollView>
@@ -283,7 +253,7 @@ const mapDispatchToProps = {
   GoggleData
 }
 
-HomeScreen.prototypes = {
+Profile.prototypes = {
   signOut: propTypes.func.isRequired,
   authState: propTypes.object.isRequired,
   userState: propTypes.object.isRequired,
@@ -291,7 +261,7 @@ HomeScreen.prototypes = {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps )(HomeScreen)
+export default connect(mapStateToProps, mapDispatchToProps )(Profile)
 
 
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import {StyleSheet, ScrollView, TouchableOpacity, View} from 'react-native'
 
 import {
@@ -11,6 +11,8 @@ import {
     Avatar
 } from 'native-base'
 
+var img = '';
+
 import storage from '@react-native-firebase/storage'
 import ProgressBar from 'react-native-progress/Bar'
 
@@ -22,6 +24,8 @@ import propTypes from 'prop-types'
 import {signUp} from '../action/auth'
 import {connect} from 'react-redux'
 
+const def = 'https://image.flaticon.com/icons/png/512/3011/3011270.png';
+const MINUTE_MS = 1000;
 
 const SignUp = ({signUp}) => {
 
@@ -32,15 +36,13 @@ const SignUp = ({signUp}) => {
     const [country, setCountry] = useState('')
     const [bio, setBio] = useState('')
     const [Address, setAdd] = useState('')
-    const [image, setImage] = useState('https://image.flaticon.com/icons/png/512/3011/3011270.png')
+    const [image, setImage] = useState(def)
     const [imageUploading, setImageUploading] = useState(false)
     const [uploadStatus, setUploadStatus] = useState(null)
 
     const chooseImage = async () => {
 
       ImagePicker.showImagePicker(options, (response) => {
-          console.log('Response = ', response)
-
           if (response.didCancel) {
               console.log('User cancelled image picker');
             } else if (response.error) {
@@ -48,7 +50,6 @@ const SignUp = ({signUp}) => {
             } else if (response.customButton) {
               console.log('User tapped custom button: ', response.customButton);
             } else {
-              console.log(response)
               uploadImage(response)
             }
            
@@ -59,7 +60,7 @@ const SignUp = ({signUp}) => {
         setImageUploading(true)
 
         const reference = storage().ref(response.fileName)
-        const task = reference.putFile(response.uri)
+        const task = reference.putFile(response.path)
         task.on('state_changed', (taskSnapshot) => {
             const percentage = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 1000
             setUploadStatus(percentage)
@@ -67,11 +68,29 @@ const SignUp = ({signUp}) => {
 
         task.then(async () => {
             const url = await reference.getDownloadURL()
-            setImage(url)
             setImageUploading(false)
             console.log(url)
+            img = url
+            setImage(url)
         })
     }
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if(img !== ''){
+          const vari = img;
+          setImage(vari);
+          console.log(image)
+        }
+        else
+        {
+          console.log(img);
+        }
+      }, MINUTE_MS);
+    
+      return () => clearInterval(interval);
+      
+    }, [])
 
     const doSignUp = async () => {
       signUp({name,Contact, bio,Address, country, email, password, image})
@@ -82,7 +101,7 @@ const SignUp = ({signUp}) => {
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
 
         <TouchableOpacity style={{margin:10}} onPress={chooseImage}>
-            <Avatar alignSelf="center" size ="xl" source={{uri: image}} />
+            <Avatar alignSelf="center" size ="xl" source={{uri:image}} />
         </TouchableOpacity>
         
         {imageUploading && ( <ProgressBar progress={uploadStatus} style={styles.progress} />)}

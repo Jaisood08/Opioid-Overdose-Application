@@ -52,7 +52,7 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
       <VStack space="6" my="2" mx="1">
           <Center px='3'>
               <Image 
-              source={Welcome} 
+              source={require('../assets/Skull.png')} 
               size='xl'
               style={{left:-10}}
               resizeMode={'contain'}
@@ -89,19 +89,27 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
   
             <VStack space="5">
             <Text fontWeight="500" fontSize="xl" px="5" color="gray.500">
-              Labels
+              Profile
             </Text>
           <VStack space="3">
-              <Pressable px="5" py="3">
+              <Pressable px="5" py="3" 
+              onPress={() => {
+                drawer.current.closeDrawer()
+                navigation.navigate('Profile')}
+              }>
                   <HStack space="7" alignItems="center">
                       <Icon3 name="user-circle" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">
-                          Family
+                          User
                       </Text>
                   </HStack>
               </Pressable>
           
-              <Pressable px="5" py="3">
+              <Pressable px="5" py="3"
+              onPress={() => {
+                drawer.current.closeDrawer()
+                navigation.navigate('Family')}
+              }>
                   <HStack space="7" alignItems="center">
                       <Icon3 name="user-circle" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">

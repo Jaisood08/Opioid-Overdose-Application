@@ -2,8 +2,6 @@ import React from 'react'
 import {StyleSheet,View,Text, Image} from 'react-native'
 
 
-import Welcome from '../assets/Skull.png';
-
 import WavyHeader from '../componenets/WavyHeader';
 
 
@@ -17,7 +15,7 @@ const CustomHeader = ({navigation}) => {
                 </View>
         
         <Image
-            source={Welcome}
+            source={require('../assets/Skull.png')} 
             style={{width: null, height: 150, top: -229,left: -20}}
             resizeMode="contain"
         />

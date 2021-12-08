@@ -12,6 +12,8 @@ import Signup from './screens/SignUp';
 import HomeScreen from './screens/Home';
 import Profile from './screens/Profile';
 import Naloxone from './screens/Naloxone';
+import Family from './screens/Family';
+
 
 import {SET_USER, IS_AUTHTHENTICATED} from './action/action.types'
 import database from '@react-native-firebase/database'
@@ -108,12 +110,16 @@ return (
         {authState.isAuthenticated ? (
           <>
           <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+          />
+          <Stack.Screen
           name="Naloxone"
           component={Naloxone}
           />
           <Stack.Screen
-              name="Home"
-              component={HomeScreen}
+          name="Family"
+          component={Family}
           />
           <Stack.Screen
           name="Profile"
