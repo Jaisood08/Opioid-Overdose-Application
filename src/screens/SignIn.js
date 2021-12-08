@@ -15,14 +15,22 @@ import CustomHeader from '../screens/CustomHeader';
 import En from 'react-native-vector-icons/Entypo'
 import Fa from 'react-native-vector-icons/FontAwesome'
 
+import {connect} from 'react-redux'
+import {signIn} from '../action/auth'
+import {googleLogin} from '../action/auth'
+import {GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import propTypes from 'prop-types'
 
-const LoginScreen = ({ navigation }) => {
+
+const SignIn = ({ navigation,signIn,googleLogin}) => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const [show, setShow] = React.useState(false)
     const handleClick = () => setShow(!show)
+
+    const doSignIn = () => {signIn({email, password})}
 
     return (
         <>
@@ -68,15 +76,19 @@ const LoginScreen = ({ navigation }) => {
                     color='#f3a137'
                     block
                     style={{backgroundColor:'#f3a137',marginTop:15,width:200,borderRadius:10,alignSelf:'center'}}
-                    >
+                    onPress={doSignIn}>
                         <Text>SignIn</Text>
                 </Button>
                 
                 <Text style={{marginTop:10}} color="#750000" >OR</Text>
 
-                <Box style={{flexDirection:'row',justifyContent:'space-between',marginTop:10}}> 
-                <Fa raised name="facebook-square" size={40} color="#3b5998" style={{marginRight:38}}/>
-                <Fa name="google-plus-square" size={40} color="#dd4b39" style={{}}/>
+                <Box > 
+                    <GoogleSigninButton
+                    style={{borderRadius:20,width:120}}
+                    size={GoogleSigninButton.Size.Standard}
+                    color={GoogleSigninButton.Color.Light}
+                    onPress={() => googleLogin()}
+                    />
                 </Box>
 
                 <TouchableOpacity
@@ -94,8 +106,17 @@ const LoginScreen = ({ navigation }) => {
 };
 
 
-export default LoginScreen;
+const mapDispatchToProps = {
+    signIn: (data) => signIn(data),
+    googleLogin: () => googleLogin()
+}
 
+SignIn.propTypes = {
+    signIn: propTypes.func.isRequired,
+    googleLogin : propTypes.func.isRequired
+}
+
+export default connect(null, mapDispatchToProps)(SignIn)
 
 const styles = StyleSheet.create({
     container: {
@@ -117,6 +138,6 @@ const styles = StyleSheet.create({
     Title:{
         color:'#000000',
         textAlign: 'center',
-    },
-  });
+    }
+});
   

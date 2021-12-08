@@ -8,14 +8,20 @@ import {
     Input,
     Text,
     Button,
-    Avatar,
-    Content
+    Avatar
 } from 'native-base'
 
 import storage from '@react-native-firebase/storage'
 import ProgressBar from 'react-native-progress/Bar'
 
 import ImagePicker from 'react-native-image-picker'
+import {options} from '../utils/options'
+
+//redux
+import propTypes from 'prop-types'
+import {signUp} from '../action/auth'
+import {connect} from 'react-redux'
+
 
 const SignUp = ({signUp}) => {
 
@@ -31,41 +37,44 @@ const SignUp = ({signUp}) => {
     const [uploadStatus, setUploadStatus] = useState(null)
 
     const chooseImage = async () => {
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response)
 
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-              } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-              } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-              } else {
-                console.log(response)
-                uploadImage(response)
-              }
-             
-               
-        })
-    }
+      ImagePicker.showImagePicker(options, (response) => {
+          console.log('Response = ', response)
 
+          if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.error) {
+              console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+              console.log('User tapped custom button: ', response.customButton);
+            } else {
+              console.log(response)
+              uploadImage(response)
+            }
+           
+      })
+  }
+    
     const uploadImage = async (response) => {
         setImageUploading(true)
-        const reference = storage().ref(response.fileName)
 
-        const task = reference.putFile(response.path)
+        const reference = storage().ref(response.fileName)
+        const task = reference.putFile(response.uri)
         task.on('state_changed', (taskSnapshot) => {
             const percentage = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 1000
-
             setUploadStatus(percentage)
         })
 
         task.then(async () => {
             const url = await reference.getDownloadURL()
-
             setImage(url)
             setImageUploading(false)
+            console.log(url)
         })
+    }
+
+    const doSignUp = async () => {
+      signUp({name,Contact, bio,Address, country, email, password, image})
     }
 
     return (
@@ -76,9 +85,7 @@ const SignUp = ({signUp}) => {
             <Avatar alignSelf="center" size ="xl" source={{uri: image}} />
         </TouchableOpacity>
         
-        {imageUploading && (
-          <ProgressBar progress={uploadStatus} style={styles.progress} />
-        )}
+        {imageUploading && ( <ProgressBar progress={uploadStatus} style={styles.progress} />)}
 
         <FormControl style={{}}>
                
@@ -124,8 +131,7 @@ const SignUp = ({signUp}) => {
               style={{margin:10,color: 'black',textAlign:'center'}}
               onChangeText={(text) => setCountry(text)}
             />
-                
-                
+
             <Input
               placeholder="Address"
               value={Address}
@@ -134,21 +140,27 @@ const SignUp = ({signUp}) => {
             />
               
             <Button regular block
-            style={{margin:10, backgroundColor:'#f3a137'}}>
+            style={{margin:10, backgroundColor:'#f3a137'}}
+            onPress={doSignUp}
+            >
               <Text>SignUp</Text>
             </Button>
-                
             </FormControl>
-
-
       </ScrollView>
       </NativeBaseProvider>
       );
     
 }
 
-export default SignUp;
+const mapDispatchToProps = {
+  signUp: (data) => signUp(data)
+}
 
+SignUp.propTypes = {
+  signUp: propTypes.func.isRequired
+}
+
+export default connect(null, mapDispatchToProps)(SignUp)
 
 
 const styles = StyleSheet.create({
