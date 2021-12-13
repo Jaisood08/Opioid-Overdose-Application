@@ -5,30 +5,34 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import {useDispatch, connect} from 'react-redux'
 
 import OnboardingScreen from './screens/OnboardingScreen';
 import LoginScreen from './screens/SignIn';
 import Signup from './screens/SignUp';
 import HomeScreen from './screens/Home';
 import Profile from './screens/Profile';
-import Naloxone from './screens/Naloxone';
 import Family from './screens/Family';
+import Location from './screens/Location';  
+import Risk from './screens/Risk';
+import Result from './screens/Result';
+import Watch from './screens/Watch';
+import Alert from './screens/Alert';
+import Naloxone from './screens/Naloxone';
 
-
-import {SET_USER, IS_AUTHTHENTICATED} from './action/action.types'
-import database from '@react-native-firebase/database'
-import EmptyContainer from './componenets/EmptyContainer'
-import {requestPermission} from './utils/AskPermission'
-import {useDispatch, connect} from 'react-redux'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {SET_USER, IS_AUTHTHENTICATED} from './action/action.types'
+import database from '@react-native-firebase/database'
+import {requestPermission} from './utils/AskPermission'
 
+import EmptyContainer from './componenets/EmptyContainer'
 
 
 const Stack = createStackNavigator();
 
-const AuthStack = ({authState}) => {
+const App = ({authState}) => {
 
   //For Onboarding
   const [isFirstTime, setIsFirstTime] = useState(null);
@@ -55,8 +59,6 @@ const AuthStack = ({authState}) => {
             payload: snapshot.val(),
           })
         })
-
-
     } else {
       dispatch({
         type: IS_AUTHTHENTICATED,
@@ -67,6 +69,7 @@ const AuthStack = ({authState}) => {
 
   useEffect(() => {
     requestPermission()
+
     AsyncStorage.getItem('alreadyLaunched').then(value =>{
         if (value == null) {
         AsyncStorage.setItem('alreadyLaunched', 'true');
@@ -76,16 +79,16 @@ const AuthStack = ({authState}) => {
         }
         });
 
-        GoogleSignin.configure({
-          scopes: ['https://www.googleapis.com/auth/drive.readonly'], 
-          webClientId: "285140180648-86gs7bqraedjtgkaaeg79ebqnneem2t2.apps.googleusercontent.com", 
-          offlineAccess: true, 
-          forceCodeForRefreshToken: true, 
-          profileImageSize: 120, 
-          });
+    GoogleSignin.configure({
+      scopes: ['https://www.googleapis.com/auth/drive.readonly'], 
+      webClientId: "285140180648-86gs7bqraedjtgkaaeg79ebqnneem2t2.apps.googleusercontent.com", 
+      offlineAccess: true, 
+      forceCodeForRefreshToken: true, 
+      profileImageSize: 120, 
+      });
 
-      const susbcriber = auth().onAuthStateChanged(onAuthStateChanged)
-      return susbcriber;
+    const susbcriber = auth().onAuthStateChanged(onAuthStateChanged)
+    return susbcriber;
   }, []);
 
   if (authState.loading) {
@@ -94,58 +97,43 @@ const AuthStack = ({authState}) => {
       ) 
   }
 
+
   if(isFirstTime === null){return null;}
   else if(isFirstTime===true){ routeName = 'Onboarding'; }
   else { routeName = 'Login'; }
   if(authState.isAuthenticated) {routeName = 'Home';}
 
+  // initialRouteName={routeName}
 
 return (
-  <>
   <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName={routeName}
         screenOptions={{headerShown: false}}
+        initialRouteName={routeName}
         >
         {authState.isAuthenticated ? (
           <>
-          <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-          />
-          <Stack.Screen
-          name="Naloxone"
-          component={Naloxone}
-          />
-          <Stack.Screen
-          name="Family"
-          component={Family}
-          />
-          <Stack.Screen
-          name="Profile"
-              component={Profile}
-          />
+          <Stack.Screen name="Home" component={HomeScreen}/>
+          <Stack.Screen name="Risk" component={Risk} />
+          <Stack.Screen name="Naloxone" component={Naloxone} />
+          <Stack.Screen name="Family" component={Family} />
+          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Location" component={Location}/>
+          <Stack.Screen name="Result" component={Result}/>
+          <Stack.Screen name="Watch" component={Watch}/>
+          <Stack.Screen name="Alert" component={Alert}/>
           </>
+          
         ) : (
           <>
-          <Stack.Screen 
-              name="Onboarding"
-              component={OnboardingScreen}
-          />
-          <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-          />
-          <Stack.Screen
-              name="SignUp"
-              component={Signup}
-          />
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={Signup} />
           </>
         )}
         
         </Stack.Navigator>
     </NavigationContainer>
-    </>
     );
   };
 
@@ -153,4 +141,4 @@ const mapStateToProps = (state) => ({
   authState: state.auth
 })
   
-export default connect(mapStateToProps)(AuthStack)
+export default connect(mapStateToProps)(App)

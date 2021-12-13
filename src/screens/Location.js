@@ -1,8 +1,9 @@
-import React, {useRef,useState} from 'react';
+import React, {useEffect, useRef,useState} from 'react';
 import {
     DrawerLayoutAndroid,
     StyleSheet,
     ScrollView,
+    View
 } from 'react-native';
 import {
     NativeBaseProvider,
@@ -16,125 +17,166 @@ import {
     HStack,
     Divider,
     Avatar,
-    FormControl,
-    Input,
     Button
 } from 'native-base';
 
-import Snackbar from 'react-native-snackbar'
-import ProgressBar from 'react-native-progress/Bar'
 
-import database from '@react-native-firebase/database'
 
-import storage from '@react-native-firebase/storage'
-import ImagePicker from 'react-native-image-picker'
-import {options} from '../utils/options'
+import MapView, { PROVIDER_GOOGLE,Marker  } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import GetLocation from 'react-native-get-location'
 
-//redux
+import Welcome from '../assets/Skull.png'
+
 import { connect} from 'react-redux'
 import propTypes from 'prop-types'
 import {signOut,GoggleData} from '../action/auth'
 
-
 import Icon3 from 'react-native-vector-icons/dist/FontAwesome'
 import Fa from 'react-native-vector-icons/FontAwesome'
-import Fa2 from 'react-native-vector-icons/FontAwesome5'
 import Icon from 'react-native-vector-icons/dist/AntDesign'
 import Icon2 from 'react-native-vector-icons/dist/MaterialCommunityIcons'
+import Fa2 from 'react-native-vector-icons/FontAwesome5'
 
 import EmptyContainer from '../componenets/EmptyContainer'
 const drawerPosition = "right";
 
-const Profile = ({signOut,userState, authState, navigation,GoggleData}) => {
+const Location = ({signOut,userState, authState, navigation,GoggleData}) => {
 
-    const drawer = useRef(null);
+  const drawer = useRef(null);
 
-    const [name,setname] = useState(userState.name);
-    const email = userState.email;
-    const [Contact,setContact] = useState(userState.Contact);
-    const [Address,setAddress] = useState(userState.Address);
-    const [Country,setCountry] = useState(userState.Country);
-    const [Bio,setBio] = useState(userState.Bio);
-    const [image,setimage] = useState(userState.image);
-    const [Age,setAge] = useState(userState.Age);
+    const [Places,setPlaces] = useState([])
+    const [mlatitude,setmlatitude] = useState (37.78825)
+    const [mlongitude,setmlongitude] =  useState(-122.4324)
 
+    const fetchNearestPlacesFromGoogle = () => {
+
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+        })
+        .then(location => {
+            setmlatitude(location.latitude)
+            setmlongitude(location.longitude)
+            console.log(location);
+        })
+        .catch(error => {
+            const { code, message } = error;
+            console.warn(code, message);
+        })
+
+        // const latitude = 25.0756; // you can update it with user's latitude & Longitude
+        // const longitude = 55.1454;
+        // let radMetter = 2 * 1000; // Search withing 2 KM radius
+    
+        // const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' + latitude + ',' + longitude + '&radius=' + radMetter + '&key=' + "AIzaSyBp6n8Y1g70ofb4jg7Q6Zo9O_ecY5H3n0Y"
+        
+        // console.log(url)
+        // fetch(url)
+        //   .then(res => {
+        //     return res.json()
+        //   })
+        //   .then(res => {
+    
+        //   var places = [] // This Array WIll contain locations received from google
+        //     for(let googlePlace of res.results) {
+        //       var place = {}
+        //       var lat = googlePlace.geometry.location.lat;
+        //       var lng = googlePlace.geometry.location.lng;
+        //       var coordinate = {
+        //         latitude: lat,
+        //         longitude: lng,
+        //       }
+    
+        //       var gallery = []
+    
+        //       if (googlePlace.photos) {
+        //        for(let photo of googlePlace.photos) {
+        //          var photoUrl = Urls.GooglePicBaseUrl + photo.photo_reference;
+        //          gallery.push(photoUrl);
+        //       }
+        //     }
+    
+        //       place['placeTypes'] = googlePlace.types
+        //       place['coordinate'] = coordinate
+        //       place['placeId'] = googlePlace.place_id
+        //       place['placeName'] = googlePlace.name
+        //       place['gallery'] = gallery
+    
+        //       places.push(place);
+        //     }
+    
+        //     console.log(places);
+        //   })
+        //   .catch(error => {
+        //     console.log(error);
+        //   });
+          
+          const n = Math.floor(Math.random() * 20)
+          console.log(n)
+          var pl = [] 
+
+          for(var i = 0; i < n; i++) {
+            if(i/2 == 0) {
+              pl.push({
+                name:i,
+                latitude : mlatitude + (Math.random() / 100) ,
+                longitude : mlongitude + (Math.random() / 100) ,
+              })
+            } else {
+              pl.push({
+                name:i,
+                latitude : mlatitude - (Math.random() / 100) ,
+                longitude : mlongitude - (Math.random() / 100) ,
+              })
+            }
+            console.log(pl[i])
+          }
+          setPlaces(pl)
+        
+      }
+
+      useEffect(() => {
+
+        const n = Math.floor(Math.random() * 20)
+          console.log(n)
+          var pl = [] 
+
+          for(var i = 0; i < n; i++) {
+            if(i/2 == 0) {
+              pl.push({
+                name:i,
+                latitude : mlatitude + (Math.random() / 10000) ,
+                longitude : mlongitude + (Math.random() / 10000) ,
+              })
+            } else {
+              pl.push({
+                name:i,
+                latitude : mlatitude - (Math.random() / 10000) ,
+                longitude : mlongitude - (Math.random() / 10000) ,
+              })
+            }
+            console.log(pl[i])
+          }
+          setPlaces(pl)
+
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+        })
+        .then(location => {
+            setmlatitude(location.latitude)
+            setmlongitude(location.longitude)
+            console.log(location);
+        })
+        .catch(error => {
+            const { code, message } = error;
+            console.warn(code, message);
+        })
+
+        
+    }, [])
 
     
-    const [imageUploading, setImageUploading] = useState(false)
-    const [uploadStatus, setUploadStatus] = useState(null)
-
-
-    const chooseImage = async () => {
-        ImagePicker.showImagePicker(options, (response) => {
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-              } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-              } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-              } else {
-                uploadImage(response)
-              }
-             
-               
-        })
-    }
-
-
-    const uploadImage = async (response) => {
-        setImageUploading(true)
-        const reference = storage().ref(response.fileName)
-
-        const task = reference.putFile(response.path)
-        task.on('state_changed', (taskSnapshot) => {
-            const percentage = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 1000
-
-            setUploadStatus(percentage)
-        })
-
-        task.then(async () => {
-            const url = await reference.getDownloadURL()
-
-            setimage(url)
-            setImageUploading(false)
-            console.log(url)
-        })
-    }
-
-    const Update = async () => {
-
-      console.log(name,Age,email,Contact,Address,Country,Bio,image);
-
-      try{
-        await database().ref('/users/' + userState.uid).update({
-          name,
-          Age,
-          Contact,
-          email,
-          Address,
-          Country,
-          Bio,
-          image
-        })
-
-        Snackbar.show({
-            text:  'Profile Updated',
-            textColor: "white",
-            backgroundColor: 'green',
-        })
-
-      }
-      catch(error){
-        console.log(error);
-        Snackbar.show({
-          text: "Information Update Failed",
-          textColor: "white",
-          backgroundColor: "red"
-      })
-      }
-
-    }
 
     console.log("YEEEYE");
     console.log(userState);
@@ -318,6 +360,7 @@ const Profile = ({signOut,userState, authState, navigation,GoggleData}) => {
       </NativeBaseProvider>
     );
     
+
     return (
       <DrawerLayoutAndroid
         ref={drawer}
@@ -328,100 +371,84 @@ const Profile = ({signOut,userState, authState, navigation,GoggleData}) => {
       <ScrollView>
       <NativeBaseProvider>
         <Box style={styles.container}>
-                <Pressable onPress={ ()=>{
-                    console.log("clicked"); 
-                    navigation.navigate('Profile')
-                }}>
-                <Box style={{flexDirection:"row"}}>
-                    <Avatar size ="md" source={{uri:userState.image}} />
-                    <Text bold color="black" textAlign='center'
-                    style={{fontSize:17 ,margin:13}} >{userState.name}</Text>
-                </Box>
+            <Pressable onPress={navigation.navigate('Profile')}>
+            <Box style={{flexDirection:"row"}}>
+                <Avatar size ="md" source={{uri:userState.image}} />
+                <Text bold color="black" textAlign='center'
+                  style={{fontSize:17 ,margin:13}} >{userState.name}</Text>
+            </Box>
             </Pressable>
             <Box>
             <Fa name="bars" size={40} color="red" onPress ={()=>drawer.current.openDrawer()}/>
             </Box>
         </Box>
         <Box style={{color:"black"}}>
-          <Divider my={2} />
+
             <Text bold color="black" textAlign='center' fontSize='4xl'>
-                User Profile
+                Naloxone Availablity
             </Text>
-          <Divider my={2} />
-          <FormControl>
-          <Box flexDirection="row">
-            <Box>
-              <Pressable onPress={chooseImage}>
-              <Image alt='USER' marginLeft={1} marginRight={3} size ="xl" borderRadius={16} source={{uri:userState.image}} />  
-              </Pressable>
-              {imageUploading && ( <ProgressBar progress={uploadStatus} style={styles.progress} />)}
-            </Box>
-            <Divider my={1} orientation="vertical" />
-            <Box style={{marginLeft:13}}>
-              <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Name : </Text>
-                <Input w={"58%"} fontSize="xl" variant="underlined" placeholder={userState.name} 
-                onChangeText={(text) => setname(text)} />
-              </HStack>
-              <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Age : </Text>
-                <Input w={"58%"} fontSize="xl" variant="underlined" placeholder={userState.Age ? userState.Age:''} 
-                onChangeText={(text) => setAge(text)}/>
-              </HStack>
-              <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Contact : </Text>
-                <Input w={"58%"} fontSize="xl" variant="underlined" placeholder={userState.Contact? userState.Contact:''}
-                onChangeText={(text) => setContact(text)} />
-              </HStack>
-            </Box>
-          </Box>
-          <Box margin={5}>
 
-            <HStack>
-                <Text bold fontSize='xl'>Email : </Text>
-                <Text fontSize="xl">{userState.email? userState.email:''}</Text>
-            </HStack>
-
-            <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Address : </Text>
-                <Input w={"80%"} fontSize="xl" variant="underlined" placeholder={userState.Address? userState.Address:''} 
-                onChangeText={(text) => setAddress(text)} />
-            </HStack>
-
-            <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Country : </Text>
-                <Input w={"80%"} fontSize="xl" variant="underlined" placeholder={userState.Country? userState.country:''}
-                onChangeText={(text) => setCountry(text)} />
-            </HStack>
-
-            <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Bio : </Text>
-                <Input w={"80%"} fontSize="xl" variant="underlined" placeholder={userState.Bio? userState.Bio:''}
-                onChangeText={(text) => setBio(text)}  />
-            </HStack>
-
-            <HStack>
-                <Text marginTop={2} bold fontSize='xl'>Risk : </Text>
-                <Text marginTop={2} fontSize="xl" variant="underlined" >{userState.Risk? (userState.Risk*100).toFixed(3):''}%</Text>
-            </HStack>
-
-            <Button 
-              color='#f3a137'
-              block
-              size="lg"
-              onPress={Update}
-              style={{backgroundColor:'#f3a137',marginTop:15,width:200,borderRadius:10,alignSelf:'center'}}
-             > 
-             <HStack >
-              <Icon2 name="update" size={20}/>
-              <Text bold > Update</Text>
-             </HStack>
+            <Button
+            margin={5}
+            onPress={() => {fetchNearestPlacesFromGoogle()}}
+            >
+            Refresh
             </Button>
 
-          </Box>
-          </FormControl>
+            <Divider />
 
+            <Box 
+            style={{height:600,width:400,margin:3}}>
+            
+                <MapView
+                provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                style={styles.map}
+                region={{
+                    latitude: mlatitude,
+                    longitude: mlongitude,
+                    latitudeDelta: 0.015,
+                    longitudeDelta: 0.0121,
+                }}
+                >
+                    <Marker 
+                    coordinate={{
+                    latitude: mlatitude,
+                    longitude: mlongitude,
+                    }}
+                    image={require('../assets/OWN.png')}
+                    title="Current Location"
+                    description="Users Location"
+                    >
+                    </Marker>
 
+                    <Marker 
+                    coordinate={{
+                    latitude: mlatitude+.005,
+                    longitude: mlongitude+.007,
+                    }}
+                    image={require('../assets/medical.png')}
+                    title="Current Location"
+                    description="Naloxone Not Available Here"
+                    >
+                    </Marker>
+
+                    {Places.map((da)=>(
+                      <Marker 
+                        key={da.name}
+                        coordinate={{
+                          latitude: da.latitude,
+                          longitude: da.longitude,
+                        }}
+                      image={require('../assets/medical.png')}
+                      title={"Medical Store"+ da.name}
+                      description="Naloxone Available Here"
+                      >
+                      </Marker>
+                    ))}
+            
+                </MapView>
+
+            </Box>
         </Box>
       </NativeBaseProvider>  
       </ScrollView>
@@ -439,7 +466,7 @@ const mapDispatchToProps = {
   GoggleData
 }
 
-Profile.prototypes = {
+Location.prototypes = {
   signOut: propTypes.func.isRequired,
   authState: propTypes.object.isRequired,
   userState: propTypes.object.isRequired,
@@ -447,7 +474,7 @@ Profile.prototypes = {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps )(Profile)
+export default connect(mapStateToProps, mapDispatchToProps )(Location)
 
 
 
@@ -459,5 +486,14 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       margin:10,
     },
+    container2: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+      },
+      map: {
+        ...StyleSheet.absoluteFillObject,
+      },
 });
+
 

@@ -1,18 +1,16 @@
 import React from 'react';
-import AuthStack from './AuthStack'
+import App from './App'
 import store from './store'
-import {Text} from 'react-native';
-
 import {Provider} from 'react-redux'
 
-const App = () => {
+const RootApp = () => {
   return(
     <Provider store={store}>
-      <AuthStack />
+      <App/>
     </Provider>
   );
 };
 
   
-export default App;
+export default RootApp;
 

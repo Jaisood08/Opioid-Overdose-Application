@@ -22,10 +22,9 @@ export const googleLogin = (data) => async (dispatch) => {
             
             database()
             .ref('/users/' + data.user.uid)
-            .set({
+            .update({
                 name : data.user.displayName, 
                 email : data.user.email,
-                Contact: data.user.phoneNumber,
                 image :  data.user.photoURL,
                 uid: data.user.uid
             })
@@ -64,7 +63,7 @@ export const signUp = (data) => async (dispatch) => {
             email,
             country,
             image,
-            bio,
+            Bio:bio,
             Address,
             uid: data.user.uid
         })

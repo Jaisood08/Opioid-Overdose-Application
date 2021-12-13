@@ -27,14 +27,16 @@ import {signOut,GoggleData} from '../action/auth'
 import Icon3 from 'react-native-vector-icons/dist/FontAwesome'
 import Fa from 'react-native-vector-icons/FontAwesome'
 import Icon from 'react-native-vector-icons/dist/AntDesign'
-import Icon2 from 'react-native-vector-icons/dist/Entypo'
+import Icon2 from 'react-native-vector-icons/dist/MaterialCommunityIcons'
+import Fa2 from 'react-native-vector-icons/FontAwesome5'
 
 import EmptyContainer from '../componenets/EmptyContainer'
+const drawerPosition="right"
 
-const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
+const Naloxone= ({signOut,userState,navigation,GoggleData}) => {
 
     const drawer = useRef(null);
-    const [drawerPosition, setDrawerPosition] = useState("right");
+    
 
     console.log("YEEEYE");
     console.log(userState);
@@ -54,6 +56,7 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
               <Image 
               source={require('../assets/Skull.png')} 
               size='xl'
+              alt='OPDS'
               style={{left:-10}}
               resizeMode={'contain'}
               />
@@ -63,13 +66,10 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
               </Text>
           </Center>
   
-          <VStack divider={<Divider />} space="4"></VStack>
+          <Divider/>
           
           <VStack space="3">
-                <Pressable
-                  px="5"
-                  py="3"
-                  rounded="md"
+                <Pressable px="5" py="3"
                   onPress={() => {
                     drawer.current.closeDrawer()
                     navigation.navigate('Home')}
@@ -85,9 +85,61 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
                     </Text>
                   </HStack>
                 </Pressable>
+          
+                <Pressable px="5" py="3"
+                  onPress={() => {
+                    drawer.current.closeDrawer()
+                    navigation.navigate('Location')}
+                  }
+                 >
+                  <HStack space="7" alignItems="center">
+                    <Fa name="location-arrow" size={30} color="black" />
+                    <Text
+                      fontWeight="500"
+                      fontSize="md"
+                      color= 'gray.700'>
+                      Buy Naloxone
+                    </Text>
+                  </HStack>
+                </Pressable>
+            
+                <Pressable px="5" py="3"
+                  onPress={() => {
+                    drawer.current.closeDrawer()
+                    navigation.navigate('Risk')}
+                  }
+                 >
+                  <HStack space="7" alignItems="center">
+                    <Fa name="linode" size={30} color="black" />
+                    <Text
+                      fontWeight="500"
+                      fontSize="md"
+                      color= 'gray.700'>
+                      Risk Assessment
+                    </Text>
+                  </HStack>
+                </Pressable>
             </VStack>
+          
   
             <VStack space="5">
+            <Text fontWeight="500" fontSize="xl" px="5" color="gray.500">
+              Watch
+            </Text>
+            
+            <Pressable px="5" py="3" 
+              onPress={() => {
+                drawer.current.closeDrawer()
+                navigation.navigate('Watch')}
+              }>
+                  <HStack space="7" alignItems="center">
+                      <Icon2 name="watch" size={30} color="black" />
+                      <Text color="gray.700" fontWeight="500" fontSize="md">
+                          Watch
+                      </Text>
+                  </HStack>
+              </Pressable>
+            
             <Text fontWeight="500" fontSize="xl" px="5" color="gray.500">
               Profile
             </Text>
@@ -98,7 +150,7 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
                 navigation.navigate('Profile')}
               }>
                   <HStack space="7" alignItems="center">
-                      <Icon3 name="user-circle" size={30} color="black" />
+                      <Fa2 name="user-tie" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">
                           User
                       </Text>
@@ -111,9 +163,9 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
                 navigation.navigate('Family')}
               }>
                   <HStack space="7" alignItems="center">
-                      <Icon3 name="user-circle" size={30} color="black" />
+                      <Fa2 name="user-friends" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">
-                          Family
+                          Friends
                       </Text>
                   </HStack>
               </Pressable>
@@ -122,23 +174,45 @@ const Naloxone= ({signOut,userState, authState, navigation,GoggleData}) => {
                 signOut()
                 }}>
                   <HStack space="7" alignItems="center">
-                      <Icon name="logout" size={30} color="black" />
+                      <Icon3 name="sign-out" size={30} color="black" />
                       <Text color="gray.700" fontWeight="500" fontSize="md">
                           Log Out
                       </Text>
                   </HStack>
               </Pressable>
+              <Divider />
 
-              <Pressable px="5" py="3" onPress={() => {
-                GoggleData()
-                }}>
-                  <HStack space="7" alignItems="center">
-                      <Icon name="logout" size={30} color="black" />
-                      <Text color="gray.700" fontWeight="500" fontSize="md">
-                          User Info
-                      </Text>
-                  </HStack>
-              </Pressable>
+              {userState.admin == true ?(
+                <>
+                <Text margin = {4} fontWeight="500" fontSize="xl" px="5" color="gray.500">
+                  Debug - for admin only
+                </Text>
+                
+                <Pressable px="5" py="3" onPress={() => {
+                  GoggleData()
+                  }}>
+                    <HStack space="7" alignItems="center">
+                        <Icon3 name="user-secret" size={30} color="black" />
+                        <Text color="gray.700" fontWeight="500" fontSize="md">
+                            User Info
+                        </Text>
+                    </HStack>
+                </Pressable>
+
+                <Pressable px="5" py="3" onPress={() => {
+                  drawer.current.closeDrawer()
+                  navigation.navigate('Alert')
+                  }}>
+                    <HStack space="7" alignItems="center">
+                        <Icon2 name="bell-alert" size={30} color="black" />
+                        <Text color="gray.700" fontWeight="500" fontSize="md">
+                            Alert
+                        </Text>
+                    </HStack>
+                </Pressable>
+                </>
+              ):(<Divider />)}
+              
           </VStack>
       </VStack>
       </VStack>

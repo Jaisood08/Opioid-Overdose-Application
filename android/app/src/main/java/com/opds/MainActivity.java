@@ -1,5 +1,7 @@
 package com.opds;
 
+import android.content.Intent;
+import com.tkporter.sendsms.SendSMSPackage;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -12,4 +14,12 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "OPDS";
   }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    //probably some other stuff here
+    SendSMSPackage.getInstance().onActivityResult(requestCode, resultCode, data);
+  }
+  
 }
