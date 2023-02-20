@@ -124,6 +124,7 @@ assistant is given to them to save user’s life
 from overdose.  
 
 # Hardware
+![Hardware.png]
 
 <img src="https://github.com/Jaisood08/Opioid-Overdose-Application/blob/main/SS/Hardware.png" alt="alt text" width="300" height ="87%">
 
