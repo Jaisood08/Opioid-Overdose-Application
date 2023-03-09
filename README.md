@@ -126,8 +126,6 @@ from overdose.
 # Hardware
 ![hardware_image](/SS/Hardware.png)
 
-<img src="https://github.com/Jaisood08/Opioid-Overdose-Application/blob/main/SS/Hardware.png" alt="alt text" width="300" height ="87%">
-
 # Screenshots 
 
 <img src="https://github.com/Jaisood08/Opioid-Overdose-Application/blob/main/SS/0.jpg" alt="alt text" width="200" height ="87%">  <img src="https://github.com/Jaisood08/Opioid-Overdose-Application/blob/main/SS/1.jpg" alt="alt text" width="200" height ="87%">   <img src="https://github.com/Jaisood08/Opioid-Overdose-Application/blob/main/SS/2.jpg" alt="alt text" width="200" height ="87%">  
